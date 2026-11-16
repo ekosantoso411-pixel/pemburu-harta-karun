@@ -1,0 +1,801 @@
+<html lang="id" class="student-edition"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misi Pemburu Harta Karun</title>
+<style>
+:root{--ink:#342313;--gold:#f5c451;--gold2:#ffe6a0;--green:#244b35;--paper:#fff8e8;--muted:#79684e;--red:#a83c32}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:linear-gradient(135deg,#173d30,#315b3b 55%,#18382d);min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:12px 18px;font-weight:800;background:var(--gold);color:#38260d;box-shadow:0 4px 0 #b17a25;transition:.15s}button:hover{filter:brightness(1.06);transform:translateY(-1px)}button:active{transform:translateY(2px);box-shadow:0 2px 0 #b17a25}button.secondary{background:#e8dfca;box-shadow:0 4px 0 #b9aa8d}button.dark{background:var(--green);color:white;box-shadow:0 4px 0 #142d20}button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.wrap{max-width:1050px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;color:#fff5d9;gap:12px;flex-wrap:wrap}.brand{font-weight:900;letter-spacing:.08em}.stats{display:flex;gap:10px;flex-wrap:wrap}.pill{background:#ffffff1c;border:1px solid #ffffff35;border-radius:99px;padding:8px 13px;font-size:.9rem}
+.panel{background:var(--paper);border:3px solid #d9ad50;border-radius:24px;padding:clamp(18px,4vw,34px);box-shadow:0 18px 50px #071d1680;margin:22px 0}.hero{text-align:center;background:radial-gradient(circle at top,#fff6d9,#f4e2b8 65%,#e6ca8e)}.eyebrow{font-weight:900;color:#8b5a1b;letter-spacing:.16em;font-size:.78rem}.hero h1{font-size:clamp(2rem,6vw,4rem);line-height:1.03;margin:12px 0;color:#563516;text-shadow:2px 3px #e7c36c}.hero p{max-width:650px;margin:0 auto 20px;color:#6d5739}.treasure{font-size:5rem;filter:drop-shadow(0 8px 5px #936a2c55);margin:6px}.field{display:flex;gap:10px;max-width:520px;margin:18px auto 0;flex-wrap:wrap}.field input{flex:1;min-width:180px;padding:13px;border:2px solid #d6c39b;border-radius:12px;background:#fffdf6}.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.section-title h2{margin:0}.muted{color:var(--muted)}.map{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:13px;margin-top:18px}.place{background:#f2e4c5;border:2px solid #d7bf8d;border-radius:17px;padding:15px;text-align:center;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}.place .emoji{font-size:2.5rem}.place.done{background:#e2efd9;border-color:#7ba16d}.place.locked{opacity:.55;filter:grayscale(.7)}.place strong{font-size:.95rem}.place small{color:var(--muted)}.progress{height:12px;background:#e2d6bd;border-radius:99px;overflow:hidden;margin:12px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,#4d8a4d,#c79b35);width:0%;transition:width .3s}
+.question{font-size:1.22rem;font-weight:800;line-height:1.45;margin:16px 0}.answers{display:grid;gap:10px}.answer{background:#fffdf7;border:2px solid #ddcfb2;box-shadow:none;text-align:left;color:var(--ink);font-weight:650}.answer:hover{border-color:#bd8b2d}.answer.correct{background:#e3f2dc;border-color:#5d9b54}.answer.wrong{background:#fbe5df;border-color:#c66a58}.answer.selected{background:#fff0bd;border-color:#bd8b2d;outline:2px solid #bd8b2d}.feedback{margin-top:14px;padding:13px 15px;border-radius:12px;background:#eee5d2;line-height:1.5}.clue{background:#fff0bd;border:2px dashed #c18a26;padding:17px;border-radius:16px;margin:16px 0}.clue b{display:block;color:#80531a;margin-bottom:5px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row.spread{justify-content:space-between}.hidden{display:none!important}.inventory{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px}.clue-card{background:#f5e8c9;border:1px solid #d7bd83;border-radius:12px;padding:12px}.clue-card span{font-size:1.35rem;margin-right:6px}.final-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}.final-options button{background:#f2e4c5;box-shadow:0 4px 0 #c5a66b}.final-options button.selected{outline:3px solid #3f7946;background:#e4f0dc}.notice{font-size:.9rem;color:var(--muted)}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:10px;border-bottom:1px solid #dfd1b5}th{background:#efe2c4}.badge{display:inline-block;background:#e7d39f;padding:4px 9px;border-radius:99px;font-size:.8rem;font-weight:800}.footer{text-align:center;color:#dce9d9;font-size:.8rem;padding:8px 0 24px}
+
+/* Proteksi antarmuka guru */
+.pin-overlay{position:fixed;inset:0;z-index:1000;background:#0b211ac9;display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(4px)}
+.pin-dialog{background:var(--paper);border:3px solid #d9ad50;border-radius:23px;box-shadow:0 20px 65px #0009;padding:clamp(18px,4vw,30px);max-width:430px;width:100%}
+.pin-dialog h2{margin:9px 0}.pin-dialog p{line-height:1.5}
+.pin-input{display:block;width:100%;margin-top:7px;padding:13px;border:2px solid #cbb98f;border-radius:12px;background:#fffdf6;font-size:1.3rem;letter-spacing:.18em}
+.pin-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}.pin-actions button{flex:1;min-width:110px}
+.pin-error{color:var(--red);font-weight:750;margin:10px 0 0;min-height:1.4em}
+.pin-tip{font-size:.84rem;color:var(--muted);margin-bottom:0}
+.change-pin-panel{margin-top:18px}.change-pin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-top:12px}
+.change-pin-grid label{font-weight:750}.change-pin-grid input{font:inherit;font-weight:400;letter-spacing:.12em;width:100%;display:block;margin-top:5px;padding:11px;border:2px solid #d6c39b;border-radius:10px;background:#fffdf6}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #4d8a4d;outline-offset:3px}
+@media(max-width:560px){.wrap{padding:12px}.panel{border-radius:18px;margin:14px 0}.top{align-items:flex-start}.field{flex-direction:column}.field button{width:100%}}
+
+/* Tampilan khusus siswa: area pengelolaan guru disembunyikan. */
+html.student-edition #teacherBtn,
+html.student-edition #viewResultsBtn,
+html.student-edition #teacherScreen,
+html.student-edition #questionEditorScreen,
+html.student-edition #pinOverlay,
+html.student-edition #onlineConfigPanel {display:none!important}
+html.student-edition .footer::after {content:" • Versi Siswa"}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">🧭 PETUALANGAN BAHASA</div>
+    <div class="stats"><span class="pill">⭐ Skor: <b id="topScore">0</b></span><span class="pill">🪙 Koin: <b id="topCoins">0</b></span><span class="pill">🗺️ Petunjuk: <b id="topClues">0/5</b></span></div>
+  </header>
+
+  <main>
+    <section id="home" class="panel hero">
+      <div class="eyebrow">GAME EDUKASI BAHASA INDONESIA</div>
+      <div class="treasure">🏝️🧰</div>
+      <h1>MISI PEMBURU<br>HARTA KARUN</h1>
+      <p>Sebuah harta karun tersembunyi di Pulau Bahasa. Taklukkan lima tantangan, kumpulkan petunjuk rahasia, lalu pecahkan teka-teki untuk menemukan harta karun!</p>
+      <div class="field"><input id="playerName" maxlength="40" placeholder="Masukkan nama siswa" required=""><input id="playerGroup" maxlength="40" placeholder="Kelas / kelompok (opsional)"><button id="startBtn">MULAI PETUALANGAN →</button></div>
+      <p class="notice">Untuk siswa SMP • 5 lokasi • <span id="homeQuestionTotal">25</span> soal • 1 misi final</p>
+      <div class="row" style="justify-content:center;margin-top:14px"><button class="secondary" id="howBtn">📜 Cara Bermain</button><button class="secondary" id="teacherBtn">👩‍🏫 Area Guru</button></div>
+      <div id="howText" class="feedback hidden" style="max-width:650px;margin:16px auto 0;text-align:left">
+        <b>Cara bermain</b><ol><li>Masukkan nama atau nama kelompok.</li><li>Selesaikan seluruh soal di setiap lokasi.</li><li>Setiap lokasi yang dituntaskan memberi satu petunjuk.</li><li>Kumpulkan kelima petunjuk, lalu pilih lokasi harta karun.</li><li>Untuk soal dengan beberapa jawaban benar, pilih semua opsi yang tepat lalu tekan Periksa Jawaban.</li><li>Jawaban benar mendapat 100 poin dan satu koin bonus.</li></ol>
+      </div>
+    </section>
+
+    <section id="mapScreen" class="panel hidden">
+      <div class="section-title"><div><div class="eyebrow">PETA MISI</div><h2>Jelajahi Pulau Bahasa</h2></div><span class="badge" id="playerBadge"></span></div>
+      <p class="muted">Selesaikan tantangan secara berurutan. Setiap lokasi menyimpan satu petunjuk.</p>
+      <div class="progress"><span id="mapProgress"></span></div>
+      <div class="map" id="mapPlaces"></div>
+      <div class="clue"><b>🎒 Inventaris Petunjuk</b><div id="inventory" class="inventory"><span class="muted">Belum ada petunjuk. Mulailah petualanganmu!</span></div></div>
+      <div class="row spread"><button class="secondary" id="homeBtn">Keluar ke Menu</button><button id="finalBtn" disabled="">Menuju Misi Final 🔒</button></div>
+    </section>
+
+    <section id="quizScreen" class="panel hidden">
+      <div class="section-title"><div><div class="eyebrow" id="levelEyebrow">LEVEL 1</div><h2 id="levelTitle">Hutan Kata</h2></div><span class="badge" id="questionCount">Soal 1/5</span></div>
+      <div class="progress"><span id="quizProgress"></span></div>
+      <div class="row spread"><span class="muted" id="topic"></span><span class="badge">⏱️ <span id="timer">30</span> detik</span></div>
+      <div class="question" id="questionText"></div>
+      <p id="multiAnswerHint" class="notice hidden">☑️ Soal ini memiliki lebih dari satu jawaban benar. Pilih semua jawaban yang tepat, lalu tekan <b>Periksa Jawaban</b>.</p>
+      <div class="answers" id="answers"></div>
+      <div class="row" style="margin-top:12px"><button id="submitMultiAnswerBtn" class="hidden" disabled="">Periksa Jawaban ✓</button></div>
+      <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+      <p id="onlineSyncStatus" class="notice" aria-live="polite">✅ Semua jawaban sudah terkirim ke dashboard guru.</p>
+      <div class="row spread" style="margin-top:18px"><button class="secondary" id="backMapBtn">← Peta</button><button id="nextBtn" class="hidden">Soal Berikutnya →</button></div>
+    </section>
+
+    <section id="rewardScreen" class="panel hero hidden">
+      <div class="eyebrow">TANTANGAN DITAKLUKKAN!</div><div class="treasure">🗺️✨</div><h2 id="rewardTitle">Petunjuk ditemukan!</h2>
+      <p>Hebat! Kamu berhasil menyelesaikan lokasi ini. Simpan petunjuk berikut baik-baik.</p>
+      <div class="clue" style="text-align:left"><b>🔐 PETUNJUK RAHASIA</b><span id="rewardClue"></span></div>
+      <div class="row" style="justify-content:center"><button id="continueMapBtn">Kembali ke Peta</button></div>
+    </section>
+
+    <section id="finalScreen" class="panel hidden">
+      <div class="eyebrow">BABAK TERAKHIR</div><h2>🏆 Temukan Harta Karun!</h2>
+      <p class="muted">Baca kembali semua petunjuk. Gabungkan informasi untuk menentukan lokasi harta karun.</p>
+      <div id="finalInventory" class="inventory"></div>
+      <h3>Di manakah harta karun disembunyikan?</h3>
+      <div class="final-options" id="finalOptions">
+        <button data-place="gua">⛰️ Di dalam gua</button><button data-place="air">💧 Di dekat air terjun</button><button data-place="pohon">🌴 Di bawah pohon kelapa bertanda silang di sebelah timur pulau</button><button data-place="pantai">🏖️ Di pantai barat</button>
+      </div>
+      <label for="reason"><b>Jelaskan alasan pilihanmu (minimal satu kalimat):</b></label>
+      <input id="reason" style="width:100%;padding:12px;border:2px solid #d6c39b;border-radius:12px;margin:8px 0 14px" placeholder="Saya memilih lokasi ini karena ...">
+      <div class="row"><button id="findTreasureBtn" disabled="">BUKA PETI HARTA KARUN</button><button class="secondary" id="finalBackBtn">← Kembali ke Peta</button></div>
+      <div id="finalFeedback" class="feedback hidden"></div>
+    </section>
+
+    <section id="winScreen" class="panel hero hidden">
+      <div class="eyebrow">MISI SELESAI</div><div class="treasure">💎🏆💰</div><h1>HARTA KARUN DITEMUKAN!</h1>
+      <p id="winMessage"></p>
+      <p id="onlineWinStatus" class="notice" aria-live="polite">Mengirim rekap permainan...</p>
+      <div class="inventory">
+        <div class="clue-card"><b>⭐ Total Skor</b><h2 id="endScore">0</h2></div>
+        <div class="clue-card"><b>🪙 Koin</b><h2 id="endCoins">0</h2></div>
+        <div class="clue-card"><b>✅ Jawaban Benar</b><h2 id="endCorrect">0/25</h2></div>
+      </div>
+      <p><span class="badge">GELAR: MASTER PEMBURU HARTA KARUN</span></p>
+      <div class="row" style="justify-content:center"><button id="playAgainBtn">Main Lagi</button><button class="secondary" id="viewResultsBtn">Lihat Rekap</button></div>
+    </section>
+
+
+    <section id="questionEditorScreen" class="panel hidden">
+      <div class="section-title"><div><div class="eyebrow">PENGELOLAAN MATERI</div><h2>Editor Soal</h2></div><button class="secondary" id="editorBackBtn">← Kembali</button></div>
+      <p class="muted">Pilih level dan nomor soal untuk mengedit, atau klik <b>Tambah Soal Baru</b> untuk membuat soal tambahan. Pada bagian kunci jawaban, centang satu atau beberapa pilihan yang benar. Jika lebih dari satu dipilih, siswa harus memilih semua jawaban benar tanpa memilih jawaban yang salah. Semua perubahan tersimpan di browser/perangkat ini.</p>
+      <div class="row">
+        <label style="flex:1;min-width:180px">Pilih level
+          <select id="editLevel" style="display:block;width:100%;padding:11px;border:2px solid #d6c39b;border-radius:10px;margin-top:5px"></select>
+        </label>
+        <label style="flex:1;min-width:180px">Pilih soal
+          <select id="editQuestion" style="display:block;width:100%;padding:11px;border:2px solid #d6c39b;border-radius:10px;margin-top:5px"></select>
+        </label>
+      </div>
+      <div class="row" style="margin-top:14px"><button id="addQuestionBtn" type="button">➕ Tambah Soal Baru</button><button id="cancelAddQuestionBtn" type="button" class="secondary hidden">Batal Menambah</button><span class="notice" id="editorModeText" role="status">Mode: mengedit soal yang dipilih.</span></div>
+      <label style="display:block;margin-top:14px"><b>Pertanyaan</b><textarea id="editPrompt" rows="3" style="display:block;width:100%;padding:12px;border:2px solid #d6c39b;border-radius:10px;margin-top:5px"></textarea></label>
+      <div class="inventory">
+        <label class="clue-card">Pilihan A<input id="editA" style="width:100%;padding:9px;margin-top:5px;border:1px solid #cbb98f;border-radius:8px"></label>
+        <label class="clue-card">Pilihan B<input id="editB" style="width:100%;padding:9px;margin-top:5px;border:1px solid #cbb98f;border-radius:8px"></label>
+        <label class="clue-card">Pilihan C<input id="editC" style="width:100%;padding:9px;margin-top:5px;border:1px solid #cbb98f;border-radius:8px"></label>
+        <label class="clue-card">Pilihan D<input id="editD" style="width:100%;padding:9px;margin-top:5px;border:1px solid #cbb98f;border-radius:8px"></label>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <div style="flex:1;min-width:220px"><b>Kunci jawaban (centang semua yang benar)</b><div class="row" style="margin-top:9px;gap:14px;flex-wrap:wrap"><label><input class="correct-answer-checkbox" id="correctA" type="checkbox" value="0"> A</label><label><input class="correct-answer-checkbox" id="correctB" type="checkbox" value="1"> B</label><label><input class="correct-answer-checkbox" id="correctC" type="checkbox" value="2"> C</label><label><input class="correct-answer-checkbox" id="correctD" type="checkbox" value="3"> D</label></div><small class="notice">Pilih minimal satu jawaban. Guru boleh memilih lebih dari satu.</small></div>
+        <label style="flex:2;min-width:220px"><b>Pembahasan / umpan balik</b><input id="editExplanation" style="display:block;width:100%;padding:11px;border:2px solid #d6c39b;border-radius:10px;margin-top:5px"></label>
+      </div>
+      <div class="row" style="margin-top:18px"><button id="saveQuestionBtn">💾 Simpan Perubahan</button><button class="secondary" id="resetQuestionsBtn">Kembalikan Soal Bawaan</button></div>
+      <div id="editorNotice" class="feedback hidden" aria-live="polite"></div>
+    </section>
+
+    <section id="teacherScreen" class="panel hidden">
+      <div class="section-title"><div><div class="eyebrow">DASHBOARD</div><h2>Area Guru</h2></div><button class="secondary" id="teacherBackBtn">← Kembali</button></div>
+      <p class="muted">Dashboard ini menampilkan rekap lokal dan hasil seluruh siswa yang masuk ke database online Google Sheets.</p>
+      <div class="row"><button id="exportBtn">⬇️ Ekspor CSV</button><button class="secondary" id="editQuestionsBtn">🔒 Edit Soal</button><button id="newQuestionDashboardBtn">➕ Tambah Soal</button><button class="secondary" id="downloadStudentGameBtn">💾 Simpan dan Unduh Game untuk Siswa</button><button class="secondary" id="clearResultsBtn">Hapus Rekap Lokal</button><button class="secondary" id="changePinBtn">🔑 Ganti PIN Guru</button></div>
+      <p class="notice">Tombol unduh membuat file HTML khusus siswa yang sudah berisi seluruh soal terbaru, termasuk soal tambahan dan kunci jawaban ganda. File siswa tidak menampilkan menu Area Guru atau Editor Soal.</p>
+      <div id="onlineConfigPanel" class="feedback" style="margin-top:16px;text-align:left">
+        <b>☁️ Pengaturan Rekap Online (Google Sheets)</b>
+        <p class="notice">Masukkan URL Web App Apps Script, kode kelas, dan kunci akses guru sesuai file Code.gs. Simpan lalu tes koneksi. Kunci guru tidak akan dimasukkan ke file siswa.</p>
+        <div class="change-pin-grid">
+          <label>URL Web App Google Apps Script<input id="onlineEndpointInput" type="url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off"></label>
+          <label>Kode kelas<input id="onlineClassCodeInput" type="text" maxlength="80" placeholder="Sesuai CLASS_CODE di Code.gs" autocomplete="off"></label>
+          <label>Kunci akses guru<input id="onlineTeacherKeyInput" type="password" maxlength="120" placeholder="Sesuai TEACHER_KEY di Code.gs" autocomplete="off"></label>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button id="saveOnlineConfigBtn" type="button">💾 Simpan Pengaturan Online</button>
+          <button id="testOnlineConnectionBtn" type="button" class="secondary">🔌 Tes Koneksi</button>
+          <button id="refreshOnlineDataBtn" type="button" class="secondary">🔄 Muat Rekap Online</button>
+          <button id="exportOnlineExcelBtn" type="button" class="secondary">📊 Ekspor Excel Online</button>
+        </div>
+        <p id="onlineStatus" class="notice" role="status">✅ Pengaturan online tersimpan di browser guru. Lanjutkan dengan Tes Koneksi.</p>
+      </div>
+      <div id="onlineDashboard" style="margin-top:18px">
+        <h3>📈 Ringkasan Hasil Online</h3>
+        <div class="inventory">
+          <div class="clue-card"><b>👩‍🎓 Siswa</b><h2 id="onlineStudentCount">0</h2></div>
+          <div class="clue-card"><b>🎮 Percobaan</b><h2 id="onlineAttemptCount">0</h2></div>
+          <div class="clue-card"><b>✅ Selesai</b><h2 id="onlineCompletedCount">0</h2></div>
+          <div class="clue-card"><b>📝 Jawaban terekam</b><h2 id="onlineAnswerCount">0</h2></div>
+        </div>
+        <h3>🏆 Peringkat dan Rekap Siswa</h3>
+        <div class="table-wrap"><table><thead><tr><th>Rank</th><th>Nama</th><th>Kelas</th><th>Skor</th><th>Benar</th><th>Terjawab</th><th>Status</th><th>Waktu</th></tr></thead><tbody id="onlineResultsBody"><tr><td colspan="8">Belum ada data online. Simpan pengaturan dan muat rekap.</td></tr></tbody></table></div>
+        <h3>🔎 Detail Jawaban Setiap Soal</h3>
+        <p class="notice">Termasuk jawaban benar, salah, pilihan yang terlewat, dan soal yang habis waktu. Data terbaru ditampilkan terlebih dahulu.</p>
+        <div class="table-wrap"><table><thead><tr><th>Nama</th><th>Kelas</th><th>Level</th><th>No.</th><th>Pertanyaan</th><th>Jawaban Siswa</th><th>Kunci</th><th>Hasil</th><th>Waktu</th></tr></thead><tbody id="onlineAnswersBody"><tr><td colspan="9">Belum ada jawaban terekam.</td></tr></tbody></table></div>
+      </div>
+      <form id="changePinForm" class="feedback change-pin-panel hidden" autocomplete="off">
+        <b>🔑 Ganti PIN Guru</b>
+        <p class="notice">PIN harus terdiri dari 6 angka. Perubahan PIN berlaku hanya di browser/perangkat ini; salinan file di perangkat lain tetap menggunakan PIN bawaan.</p>
+        <div class="change-pin-grid">
+          <label>PIN sekarang<input id="oldTeacherPin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required="" autocomplete="off" placeholder="6 angka"></label>
+          <label>PIN baru<input id="newTeacherPin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required="" autocomplete="new-password" placeholder="6 angka"></label>
+          <label>Ulangi PIN baru<input id="confirmTeacherPin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required="" autocomplete="new-password" placeholder="6 angka"></label>
+        </div>
+        <p id="changePinNotice" class="notice" aria-live="polite">✅ PIN berhasil diganti pada browser ini. Simpan PIN baru dengan aman.</p>
+        <div class="row"><button type="submit">💾 Simpan PIN Baru</button><button type="button" class="secondary" id="cancelChangePinBtn">Batal</button></div>
+      </form>
+      <div class="table-wrap"><table><thead><tr><th>Nama</th><th>Skor</th><th>Benar</th><th>Koin</th><th>Status</th></tr></thead><tbody id="resultsBody"><tr><td colspan="5">Belum ada hasil permainan lokal.</td></tr></tbody></table></div>
+    </section>
+  </main>
+  <div class="footer">Belajar Bahasa Indonesia sambil bertualang • Misi Pemburu Harta Karun</div>
+</div>
+<div id="pinOverlay" class="pin-overlay hidden" aria-hidden="true">
+  <div class="pin-dialog" role="dialog" aria-modal="true" aria-labelledby="pinTitle" aria-describedby="pinDescription">
+    <div class="eyebrow">🔐 AKSES KHUSUS GURU</div>
+    <h2 id="pinTitle">Masuk ke Area Guru</h2>
+    <p class="muted" id="pinDescription">Masukkan PIN guru untuk melihat rekap dan pengaturan.</p>
+    <form id="pinForm" autocomplete="off">
+      <label for="pinInput"><b>PIN Guru (6 angka)</b></label>
+      <input class="pin-input" id="pinInput" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="off" required="" placeholder="••••••">
+      <p class="pin-error" id="pinError" role="alert"></p>
+      <div class="pin-actions"><button type="submit">🔓 Buka Akses</button><button type="button" class="secondary" id="cancelPinBtn">Batal</button></div>
+    </form>
+    <p class="pin-tip">Area ini hanya untuk guru. Jangan bagikan PIN kepada siswa.</p>
+  </div>
+</div>
+<iframe id="onlineUploadFrame" name="onlineUploadFrame" title="Pengiriman hasil permainan" style="display:none;width:0;height:0;border:0"></iframe>
+<script>
+const defaultLevels=[
+ {name:"Hutan Kata",topic:"Kosakata: sinonim, antonim, makna kata, dan kata baku",icon:"🌳",clue:"Harta karun berada di sebuah tempat yang tinggi.",questions:[
+  ["Kata yang memiliki makna sama dengan “cermat” adalah ...",["Ceroboh","Teliti","Lambat","Malas"],1,"Cermat berarti teliti atau berhati-hati."],
+  ["Lawan kata “optimistis” adalah ...",["Pesimistis","Realistis","Aktif","Kreatif"],0,"Optimistis berarti penuh harapan; lawannya pesimistis."],
+  ["Kata baku yang tepat adalah ...",["Resiko","Risiko","Resikko","Resikho"],1,"Bentuk baku menurut KBBI adalah risiko."],
+  ["Makna kata “lestari” adalah ...",["Cepat berubah","Tetap terjaga","Mudah rusak","Tidak berguna"],1,"Lestari berarti tetap seperti keadaan semula atau terpelihara."],
+  ["Sinonim kata “riang” adalah ...",["Gembira","Sedih","Gelisah","Marah"],0,"Riang memiliki makna gembira atau suka cita."]
+ ]},
+ {name:"Gua Ejaan",topic:"Ejaan, huruf kapital, dan tanda baca",icon:"🪨",clue:"Tempat itu dikelilingi pepohonan.",questions:[
+  ["Penulisan nama kota yang benar adalah ...",["jakarta","Jakarta","JAKARTa","jaKarta"],1,"Nama geografi diawali huruf kapital."],
+  ["Kalimat dengan tanda baca yang tepat adalah ...",["Ibu berkata “Belajarlah.”","Ibu berkata, “Belajarlah.”","Ibu berkata “Belajarlah”.","Ibu berkata; “Belajarlah.”"],1,"Petikan langsung didahului koma dan tanda titik berada di dalam tanda petik."],
+  ["Kata depan yang ditulis terpisah terdapat pada ...",["dirumah","ke sekolah","diambil","kesana"],1,"Kata depan di dan ke ditulis terpisah dari kata yang mengikutinya."],
+  ["Penulisan yang tepat adalah ...",["Senin, 17 Agustus 2026","senin, 17 agustus 2026","Senin 17 agustus, 2026","SENIN, 17 Agustus 2026"],0,"Nama hari dan bulan diawali huruf kapital."],
+  ["Kalimat yang menggunakan tanda tanya dengan tepat adalah ...",["Siapa namamu?","Siapa namamu.","Siapa namamu!","Siapa namamu,"],0,"Kalimat tanya diakhiri tanda tanya."]
+ ]},
+ {name:"Sungai Kalimat",topic:"Struktur kalimat dan kalimat efektif",icon:"🌊",clue:"Di dekat tempat itu terdapat sebuah batu besar.",questions:[
+  ["Susunan kalimat yang paling tepat adalah ...",["Di taman bermain anak-anak.","Anak-anak bermain di taman.","Bermain anak-anak taman di.","Taman di anak-anak bermain."],1,"Susunan tersebut memiliki subjek, predikat, dan keterangan yang jelas."],
+  ["Kalimat efektif adalah ...",["Para siswa-siswa sedang belajar.","Demi untuk ibu, ia berjuang.","Siswa kelas VII mengikuti upacara.","Ia naik ke atas tangga."],2,"Kalimat tersebut tidak mengandung pemborosan kata."],
+  ["Dalam kalimat “Adik membaca buku”, predikatnya adalah ...",["Adik","Membaca","Buku","Adik membaca"],1,"Predikat menyatakan tindakan atau keadaan subjek."],
+  ["Perbaikan kalimat “Mereka saling tolong-menolong” yang efektif adalah ...",["Mereka saling menolong.","Mereka saling tolong-menolong bersama-sama.","Mereka tolong-menolong saling.","Mereka semua saling tolong-menolong satu sama lain."],0,"Kata saling sudah menyatakan tindakan berbalasan."],
+  ["Kalimat yang memiliki subjek dan predikat jelas adalah ...",["Karena hujan deras.","Di halaman sekolah.","Burung-burung terbang.","Untuk para peserta."],2,"Burung-burung adalah subjek dan terbang adalah predikat."]
+ ]},
+ {name:"Kuil Teks",topic:"Literasi: ide pokok, informasi, dan simpulan",icon:"🏛️",clue:"Lokasinya berada di sebelah timur pulau.",passage:"Bacalah teks berikut: “Warga Desa Sukaasri mengadakan kegiatan menanam pohon pada hari Minggu. Kegiatan ini dilakukan untuk menjaga ketersediaan air dan mengurangi risiko longsor. Anak-anak hingga orang dewasa ikut membawa bibit dan peralatan. Mereka berharap lingkungan desa menjadi lebih hijau dan nyaman.”",questions:[
+  ["Apa ide pokok teks tersebut?",["Warga membeli peralatan baru.","Kegiatan warga menanam pohon untuk menjaga lingkungan.","Anak-anak bermain pada hari Minggu.","Desa Sukaasri berada di pegunungan."],1,"Teks berfokus pada kegiatan penanaman pohon oleh warga."],
+  ["Kapan kegiatan menanam pohon dilakukan?",["Hari Senin","Hari Jumat","Hari Minggu","Hari Sabtu"],2,"Informasi tersebut disebutkan pada kalimat pertama."],
+  ["Salah satu tujuan kegiatan tersebut adalah ...",["Membangun jalan","Mengurangi risiko longsor","Mengadakan lomba","Membuka pasar"],1,"Teks menyebutkan tujuan mengurangi risiko longsor."],
+  ["Siapa yang mengikuti kegiatan?",["Hanya anak-anak","Hanya orang dewasa","Warga dari anak-anak hingga orang dewasa","Petugas desa saja"],2,"Teks menyatakan anak-anak hingga orang dewasa ikut serta."],
+  ["Simpulan yang tepat adalah ...",["Menjaga lingkungan merupakan tanggung jawab bersama.","Menanam pohon hanya tugas anak-anak.","Kegiatan lingkungan tidak bermanfaat.","Warga tidak peduli pada desa."],0,"Keterlibatan seluruh warga menunjukkan kepedulian bersama terhadap lingkungan."]
+ ]},
+ {name:"Menara Teka-Teki",topic:"Peribahasa, majas, paragraf, dan amanat",icon:"🗼",clue:"Carilah pohon kelapa yang memiliki tanda silang.",questions:[
+  ["Peribahasa “Besar pasak daripada tiang” berarti ...",["Pengeluaran lebih besar daripada pendapatan","Rumah yang sangat besar","Orang yang suka membantu","Pekerjaan yang mudah"],0,"Peribahasa ini menggambarkan pengeluaran yang melebihi pemasukan."],
+  ["Kalimat “Angin malam berbisik di telingaku” menggunakan majas ...",["Hiperbola","Personifikasi","Metafora","Litotes"],1,"Angin diberi sifat manusia, yaitu berbisik."],
+  ["Kalimat utama dalam paragraf biasanya memuat ...",["Contoh tambahan","Gagasan pokok","Kutipan tokoh","Daftar pustaka"],1,"Kalimat utama memuat gagasan pokok paragraf."],
+  ["Urutan kalimat agar menjadi paragraf padu: (1) Akhirnya, bibit itu tumbuh subur. (2) Rani menyiram tanaman setiap pagi. (3) Ia juga memberi pupuk secara teratur. Urutan tepat adalah ...",["1-2-3","2-3-1","3-1-2","2-1-3"],1,"Kegiatan merawat tanaman (2 dan 3) mendahului hasilnya (1)."],
+  ["Amanat yang tepat dari cerita tentang anak yang mengembalikan dompet temuan adalah ...",["Barang temuan boleh dimiliki.","Kejujuran harus dijaga.","Kita harus menghindari teman.","Uang lebih penting daripada kejujuran."],1,"Cerita tersebut menekankan nilai kejujuran."]
+ ]}
+];
+// Saat guru mengekspor game, bank soal aktif akan ditanam langsung ke file HTML siswa.
+// Nilai null berarti file ini berjalan sebagai master/guru dan membaca bank soal browser.
+const PACKAGED_QUESTION_BANK = [{"name":"Hutan Kata","topic":"Kosakata: sinonim, antonim, makna kata, dan kata baku","icon":"🌳","clue":"Harta karun berada di sebuah tempat yang tinggi.","questions":[["Kata yang memiliki makna sama dengan “cermat” adalah ...",["Ceroboh","Teliti","Lambat","Malas"],1,"Cermat berarti teliti atau berhati-hati."],["Lawan kata “optimistis” adalah ...",["Pesimistis","Realistis","Aktif","Kreatif"],0,"Optimistis berarti penuh harapan; lawannya pesimistis."],["Kata baku yang tepat adalah ...",["Resiko","Risiko","Resikko","Resikho"],1,"Bentuk baku menurut KBBI adalah risiko."],["Makna kata “lestari” adalah ...",["Cepat berubah","Tetap terjaga","Mudah rusak","Tidak berguna"],1,"Lestari berarti tetap seperti keadaan semula atau terpelihara."],["Sinonim kata “riang” adalah ...",["Gembira","Sedih","Gelisah","Marah"],0,"Riang memiliki makna gembira atau suka cita."]]},{"name":"Gua Ejaan","topic":"Ejaan, huruf kapital, dan tanda baca","icon":"🪨","clue":"Tempat itu dikelilingi pepohonan.","questions":[["Penulisan nama kota yang benar adalah ...",["jakarta","Jakarta","JAKARTa","jaKarta"],1,"Nama geografi diawali huruf kapital."],["Kalimat dengan tanda baca yang tepat adalah ...",["Ibu berkata “Belajarlah.”","Ibu berkata, “Belajarlah.”","Ibu berkata “Belajarlah”.","Ibu berkata; “Belajarlah.”"],1,"Petikan langsung didahului koma dan tanda titik berada di dalam tanda petik."],["Kata depan yang ditulis terpisah terdapat pada ...",["dirumah","ke sekolah","diambil","kesana"],1,"Kata depan di dan ke ditulis terpisah dari kata yang mengikutinya."],["Penulisan yang tepat adalah ...",["Senin, 17 Agustus 2026","senin, 17 agustus 2026","Senin 17 agustus, 2026","SENIN, 17 Agustus 2026"],0,"Nama hari dan bulan diawali huruf kapital."],["Kalimat yang menggunakan tanda tanya dengan tepat adalah ...",["Siapa namamu?","Siapa namamu.","Siapa namamu!","Siapa namamu,"],0,"Kalimat tanya diakhiri tanda tanya."]]},{"name":"Sungai Kalimat","topic":"Struktur kalimat dan kalimat efektif","icon":"🌊","clue":"Di dekat tempat itu terdapat sebuah batu besar.","questions":[["Susunan kalimat yang paling tepat adalah ...",["Di taman bermain anak-anak.","Anak-anak bermain di taman.","Bermain anak-anak taman di.","Taman di anak-anak bermain."],1,"Susunan tersebut memiliki subjek, predikat, dan keterangan yang jelas."],["Kalimat efektif adalah ...",["Para siswa-siswa sedang belajar.","Demi untuk ibu, ia berjuang.","Siswa kelas VII mengikuti upacara.","Ia naik ke atas tangga."],2,"Kalimat tersebut tidak mengandung pemborosan kata."],["Dalam kalimat “Adik membaca buku”, predikatnya adalah ...",["Adik","Membaca","Buku","Adik membaca"],1,"Predikat menyatakan tindakan atau keadaan subjek."],["Perbaikan kalimat “Mereka saling tolong-menolong” yang efektif adalah ...",["Mereka saling menolong.","Mereka saling tolong-menolong bersama-sama.","Mereka tolong-menolong saling.","Mereka semua saling tolong-menolong satu sama lain."],0,"Kata saling sudah menyatakan tindakan berbalasan."],["Kalimat yang memiliki subjek dan predikat jelas adalah ...",["Karena hujan deras.","Di halaman sekolah.","Burung-burung terbang.","Untuk para peserta."],2,"Burung-burung adalah subjek dan terbang adalah predikat."]]},{"name":"Kuil Teks","topic":"Literasi: ide pokok, informasi, dan simpulan","icon":"🏛️","clue":"Lokasinya berada di sebelah timur pulau.","passage":"Bacalah teks berikut: “Warga Desa Sukaasri mengadakan kegiatan menanam pohon pada hari Minggu. Kegiatan ini dilakukan untuk menjaga ketersediaan air dan mengurangi risiko longsor. Anak-anak hingga orang dewasa ikut membawa bibit dan peralatan. Mereka berharap lingkungan desa menjadi lebih hijau dan nyaman.”","questions":[["Apa ide pokok teks tersebut?",["Warga membeli peralatan baru.","Kegiatan warga menanam pohon untuk menjaga lingkungan.","Anak-anak bermain pada hari Minggu.","Desa Sukaasri berada di pegunungan."],1,"Teks berfokus pada kegiatan penanaman pohon oleh warga."],["Kapan kegiatan menanam pohon dilakukan?",["Hari Senin","Hari Jumat","Hari Minggu","Hari Sabtu"],2,"Informasi tersebut disebutkan pada kalimat pertama."],["Salah satu tujuan kegiatan tersebut adalah ...",["Membangun jalan","Mengurangi risiko longsor","Mengadakan lomba","Membuka pasar"],1,"Teks menyebutkan tujuan mengurangi risiko longsor."],["Siapa yang mengikuti kegiatan?",["Hanya anak-anak","Hanya orang dewasa","Warga dari anak-anak hingga orang dewasa","Petugas desa saja"],2,"Teks menyatakan anak-anak hingga orang dewasa ikut serta."],["Simpulan yang tepat adalah ...",["Menjaga lingkungan merupakan tanggung jawab bersama.","Menanam pohon hanya tugas anak-anak.","Kegiatan lingkungan tidak bermanfaat.","Warga tidak peduli pada desa."],0,"Keterlibatan seluruh warga menunjukkan kepedulian bersama terhadap lingkungan."]]},{"name":"Menara Teka-Teki","topic":"Peribahasa, majas, paragraf, dan amanat","icon":"🗼","clue":"Carilah pohon kelapa yang memiliki tanda silang.","questions":[["Peribahasa “Besar pasak daripada tiang” berarti ...",["Pengeluaran lebih besar daripada pendapatan","Rumah yang sangat besar","Orang yang suka membantu","Pekerjaan yang mudah"],0,"Peribahasa ini menggambarkan pengeluaran yang melebihi pemasukan."],["Kalimat “Angin malam berbisik di telingaku” menggunakan majas ...",["Hiperbola","Personifikasi","Metafora","Litotes"],1,"Angin diberi sifat manusia, yaitu berbisik."],["Kalimat utama dalam paragraf biasanya memuat ...",["Contoh tambahan","Gagasan pokok","Kutipan tokoh","Daftar pustaka"],1,"Kalimat utama memuat gagasan pokok paragraf."],["Urutan kalimat agar menjadi paragraf padu: (1) Akhirnya, bibit itu tumbuh subur. (2) Rani menyiram tanaman setiap pagi. (3) Ia juga memberi pupuk secara teratur. Urutan tepat adalah ...",["1-2-3","2-3-1","3-1-2","2-1-3"],1,"Kegiatan merawat tanaman (2 dan 3) mendahului hasilnya (1)."],["Amanat yang tepat dari cerita tentang anak yang mengembalikan dompet temuan adalah ...",["Barang temuan boleh dimiliki.","Kejujuran harus dijaga.","Kita harus menghindari teman.","Uang lebih penting daripada kejujuran."],1,"Cerita tersebut menekankan nilai kejujuran."]]}];
+// File master membaca konfigurasi dari browser. Saat ekspor, URL dan kode kelas ditanam ke file siswa.
+const ONLINE_CONFIG = {"endpoint":"https://script.google.com/macros/s/AKfycbyuXGUf5nBVwHJL3whja4CgTc88tm_lQFevfcyW8SFG5x1jEMjJbN3tbCZPxjV2pSmQ/exec","classCode":"kode kelas"};
+const ONLINE_CONFIG_STORAGE_KEY = "misiHartaOnlineConfigV7";
+const ONLINE_QUEUE_STORAGE_KEY = "misiHartaOnlinePendingV7";
+const STUDENT_EDITION = document.documentElement.classList.contains("student-edition");
+let levels=Array.isArray(PACKAGED_QUESTION_BANK)
+  ? JSON.parse(JSON.stringify(PACKAGED_QUESTION_BANK))
+  : (JSON.parse(localStorage.getItem("misiHartaQuestions")||"null")||JSON.parse(JSON.stringify(defaultLevels)));
+let state={name:"",group:"",runId:"",startedAt:"",score:0,coins:0,correct:0,level:0,q:0,clues:[],selected:null,answered:false,timer:30,interval:null,results:[]};
+let onlineRecords=[],onlineQueueBusy=false,onlineRefreshBusy=false,onlineLastLoadAt=null,onlineMasterConfig=null;
+const $=id=>document.getElementById(id);
+const screens=["home","mapScreen","quizScreen","rewardScreen","finalScreen","winScreen","teacherScreen","questionEditorScreen"];
+const TEACHER_PIN_STORAGE_KEY="misiHartaTeacherPinHashV3";
+const DEFAULT_TEACHER_PIN_HASH="d7d2a6cf1305d5673aed7aaa2d1adbd369e38f151dac8579ec3842dc6a28633f";
+let teacherUnlocked=false,editorUnlocked=false,pendingPINAction=null,pinReturnFocus=null,pinFailures=0,pinBlockedUntil=0;
+
+// PIN diverifikasi melalui hash; PIN aslinya tidak disimpan dalam localStorage.
+// Karena ini file HTML offline, pembatasan ini hanya mengamankan penggunaan normal antarmuka,
+// bukan perlindungan server dari orang yang mengubah kode melalui Developer Tools.
+async function hashTeacherPIN(pin){
+  if(!window.crypto || !window.crypto.subtle)throw new Error("Browser tidak mendukung verifikasi PIN. Buka file ini di Chrome atau Edge versi terbaru.");
+  const bytes=new TextEncoder().encode("misi-pemburu-guru-pin-v3:"+pin);
+  const hash=await crypto.subtle.digest("SHA-256",bytes);
+  return Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,"0")).join("");
+}
+async function isTeacherPINCorrect(pin){
+  if(!/^[0-9]{6}$/.test(pin))return false;
+  return (await hashTeacherPIN(pin))===(localStorage.getItem(TEACHER_PIN_STORAGE_KEY)||DEFAULT_TEACHER_PIN_HASH);
+}
+function show(id){
+  if(STUDENT_EDITION&&(id==="teacherScreen"||id==="questionEditorScreen"))return;
+  if((id==="teacherScreen"&&!teacherUnlocked)||(id==="questionEditorScreen"&&(!teacherUnlocked||!editorUnlocked)))return;
+  screens.forEach(s=>$(s).classList.toggle("hidden",s!==id));window.scrollTo({top:0,behavior:"smooth"});
+}
+function requestTeacherPIN(destination,action){
+  if(STUDENT_EDITION)return;
+  pinReturnFocus=document.activeElement;pendingPINAction=action;
+  $("pinTitle").textContent=destination==="editor"?"Verifikasi untuk Edit Soal":"Masuk ke Area Guru";
+  $("pinDescription").textContent=destination==="editor"?"Masukkan ulang PIN guru sebelum mengubah soal.":"Masukkan PIN guru untuk melihat rekap dan pengaturan.";
+  $("pinInput").value="";$("pinError").textContent="";
+  $("pinOverlay").classList.remove("hidden");$("pinOverlay").setAttribute("aria-hidden","false");
+  $("pinInput").focus();
+}
+function closePINPrompt(){
+  $("pinOverlay").classList.add("hidden");$("pinOverlay").setAttribute("aria-hidden","true");
+  $("pinInput").value="";pendingPINAction=null;
+  if(pinReturnFocus&&pinReturnFocus.isConnected)pinReturnFocus.focus();
+}
+function lockTeacherArea(){
+  teacherUnlocked=false;editorUnlocked=false;
+  $("changePinForm").classList.add("hidden");$("changePinForm").reset();
+  show("home");
+}
+$("pinForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const attempt=$("pinInput").value,now=Date.now();
+  if(now<pinBlockedUntil){$("pinError").textContent="Terlalu banyak percobaan. Coba lagi dalam "+Math.ceil((pinBlockedUntil-now)/1000)+" detik.";return;}
+  try{
+    if(!await isTeacherPINCorrect(attempt)){
+      pinFailures++;$("pinInput").value="";
+      if(pinFailures>=5){pinBlockedUntil=Date.now()+30000;pinFailures=0;$("pinError").textContent="5 kali PIN salah. Akses ditunda 30 detik.";}
+      else $("pinError").textContent="PIN tidak sesuai. Silakan coba lagi.";
+      $("pinInput").focus();return;
+    }
+    const action=pendingPINAction;
+    pinFailures=0;pinBlockedUntil=0;closePINPrompt();
+    if(action)action();
+  }catch(error){$("pinError").textContent=error.message||"Verifikasi PIN gagal.";}
+});
+$("cancelPinBtn").onclick=closePINPrompt;
+$("pinOverlay").addEventListener("click",event=>{if(event.target===$("pinOverlay"))closePINPrompt();});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("pinOverlay").classList.contains("hidden"))closePINPrompt();});
+function enterTeacherArea(){if(STUDENT_EDITION)return;requestTeacherPIN("dashboard",()=>{teacherUnlocked=true;editorUnlocked=false;showResults();});}
+function enterQuestionEditor(addNew=false){
+  if(STUDENT_EDITION||!teacherUnlocked)return;
+  requestTeacherPIN("editor",()=>{editorUnlocked=true;openQuestionEditor();if(addNew)beginAddQuestion();});
+}
+
+let isAddingQuestion=false;
+function totalQuestions(){return levels.reduce((sum,level)=>sum+level.questions.length,0);}
+function refreshQuestionTotals(){$("homeQuestionTotal").textContent=totalQuestions();}
+function setEditorMode(addMode){
+  isAddingQuestion=addMode;
+  $("editQuestion").disabled=addMode;
+  $("cancelAddQuestionBtn").classList.toggle("hidden",!addMode);
+  $("addQuestionBtn").classList.toggle("hidden",addMode);
+  $("saveQuestionBtn").textContent=addMode?"💾 Simpan Soal Baru":"💾 Simpan Perubahan";
+  $("editorModeText").textContent=addMode?"Mode: menambah soal baru pada level yang dipilih.":"Mode: mengedit soal yang dipilih.";
+}
+function editorNotice(message){$("editorNotice").textContent=message;$("editorNotice").classList.remove("hidden");}
+function getCorrectIndexes(question){return Array.isArray(question[2])?question[2].map(Number):[Number(question[2])];}
+function isMultiAnswerQuestion(question){return Array.isArray(question[2])&&question[2].length>1;}
+function setEditorCorrectAnswers(value){
+  const selected=Array.isArray(value)?value.map(Number):[Number(value)];
+  document.querySelectorAll(".correct-answer-checkbox").forEach(box=>{box.checked=selected.includes(Number(box.value));});
+}
+function getEditorCorrectAnswers(){
+  return [...document.querySelectorAll(".correct-answer-checkbox:checked")].map(box=>Number(box.value));
+}
+function openQuestionEditor(){
+  if(!teacherUnlocked||!editorUnlocked)return;
+  $("editLevel").innerHTML=levels.map((l,i)=>`<option value="${i}">Level ${i+1} — ${escapeHtml(l.name)}</option>`).join("");
+  loadEditorQuestionList();loadEditorQuestion();$("editorNotice").classList.add("hidden");show("questionEditorScreen");
+}
+function loadEditorQuestionList(){
+  const li=Number($("editLevel").value||0);
+  $("editQuestion").innerHTML=levels[li].questions.map((q,i)=>`<option value="${i}">Soal ${i+1}</option>`).join("");
+}
+function loadEditorQuestion(){
+  setEditorMode(false);
+  const li=Number($("editLevel").value||0),qi=Number($("editQuestion").value||0),q=levels[li].questions[qi];
+  if(!q)return;
+  $("editPrompt").value=q[0];["editA","editB","editC","editD"].forEach((id,i)=>$(id).value=q[1][i]);
+  setEditorCorrectAnswers(q[2]);$("editExplanation").value=q[3];
+}
+function beginAddQuestion(){
+  if(!teacherUnlocked||!editorUnlocked)return;
+  setEditorMode(true);
+  $("editPrompt").value="";
+  ["editA","editB","editC","editD","editExplanation"].forEach(id=>$(id).value="");
+  setEditorCorrectAnswers([0]);
+  $("editorNotice").classList.add("hidden");
+  $("editPrompt").focus();
+}
+function saveEditedQuestion(){
+  if(!teacherUnlocked||!editorUnlocked)return;
+  const li=Number($("editLevel").value),qi=Number($("editQuestion").value);
+  const prompt=$("editPrompt").value.trim(),answers=["editA","editB","editC","editD"].map(id=>$(id).value.trim()),correctAnswers=getEditorCorrectAnswers(),explanation=$("editExplanation").value.trim();
+  if(!prompt||answers.some(a=>!a)||!explanation){editorNotice("Lengkapi pertanyaan, keempat pilihan jawaban, dan pembahasan.");return;}
+  if(!correctAnswers.length){editorNotice("Pilih minimal satu kunci jawaban yang benar.");return;}
+  const answerKey=correctAnswers.length===1?correctAnswers[0]:correctAnswers;
+  const question=[prompt,answers,answerKey,explanation];
+  if(isAddingQuestion){
+    levels[li].questions.push(question);
+    const newIndex=levels[li].questions.length-1;
+    localStorage.setItem("misiHartaQuestions",JSON.stringify(levels));
+    loadEditorQuestionList();$("editQuestion").value=String(newIndex);loadEditorQuestion();
+    refreshQuestionTotals();
+    editorNotice(`✅ Soal ${newIndex+1} berhasil ditambahkan pada Level ${li+1} (${levels[li].name}). Sekarang ada ${levels[li].questions.length} soal di level ini dan ${totalQuestions()} soal dalam game. Soal akan tampil pada permainan berikutnya.`);
+  }else{
+    levels[li].questions[qi]=question;
+    localStorage.setItem("misiHartaQuestions",JSON.stringify(levels));
+    editorNotice("✅ Soal berhasil diperbarui. Perubahan akan digunakan pada permainan berikutnya di browser ini.");
+  }
+}
+function resetEditedQuestions(){
+  if(!teacherUnlocked||!editorUnlocked)return;
+  if(!confirm("Kembalikan seluruh soal ke versi bawaan? Semua soal tambahan dan perubahan soal yang sudah dibuat akan hilang."))return;
+  levels=JSON.parse(JSON.stringify(defaultLevels));localStorage.removeItem("misiHartaQuestions");
+  $("editLevel").value="0";loadEditorQuestionList();$("editQuestion").value="0";loadEditorQuestion();
+  refreshQuestionTotals();
+  editorNotice("Soal bawaan berhasil dipulihkan (25 soal). Semua soal tambahan telah dihapus dari browser ini.");
+}
+
+function makeRecordId(){
+  if(window.crypto&&typeof crypto.randomUUID==="function")return crypto.randomUUID();
+  return "misi-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,12);
+}
+function getOnlineConfig(){
+  if(ONLINE_CONFIG&&ONLINE_CONFIG.endpoint&&ONLINE_CONFIG.classCode)return ONLINE_CONFIG;
+  try{return JSON.parse(localStorage.getItem(ONLINE_CONFIG_STORAGE_KEY)||"null");}catch(_){return null;}
+}
+function getTeacherOnlineConfig(){
+  if(onlineMasterConfig)return onlineMasterConfig;
+  try{return JSON.parse(localStorage.getItem(ONLINE_CONFIG_STORAGE_KEY)||"null");}catch(_){return null;}
+}
+function setStudentSyncStatus(message){
+  const el=$("onlineSyncStatus");if(el)el.textContent=message;
+  const winEl=$("onlineWinStatus");if(winEl&&$("winScreen")&&!$("winScreen").classList.contains("hidden"))winEl.textContent=message;
+}
+function setOnlineStatus(message){
+  const el=$("onlineStatus");if(el)el.textContent=message;
+}
+function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+function jsonpRequest(url,timeoutMs=15000){
+  return new Promise((resolve,reject)=>{
+    const callback="__misiJsonp_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,9);
+    const script=document.createElement("script");let settled=false;
+    const cleanup=()=>{if(settled)return;settled=true;clearTimeout(timer);script.remove();try{delete window[callback];}catch(_){window[callback]=undefined;}};
+    window[callback]=data=>{cleanup();resolve(data);};
+    script.onerror=()=>{cleanup();reject(new Error("Tidak dapat menghubungi server. Periksa URL dan koneksi internet."));};
+    const timer=setTimeout(()=>{cleanup();reject(new Error("Server tidak merespons. Coba lagi."));},timeoutMs);
+    script.src=url+(url.includes("?")?"&":"?")+"callback="+encodeURIComponent(callback);
+    document.head.appendChild(script);
+  });
+}
+function makeApiUrl(config,params){
+  const url=new URL(config.endpoint);
+  Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,String(value)));
+  return url.toString();
+}
+function postOnlineRecord(record,config){
+  return new Promise((resolve,reject)=>{
+    try{
+      let frame=$("onlineUploadFrame");
+      if(!frame){frame=document.createElement("iframe");frame.name="onlineUploadFrame";frame.id="onlineUploadFrame";frame.style.display="none";document.body.appendChild(frame);}
+      const form=document.createElement("form");form.method="POST";form.action=config.endpoint;form.target="onlineUploadFrame";form.style.display="none";
+      const field=document.createElement("input");field.type="hidden";field.name="payload";field.value=JSON.stringify(record);form.appendChild(field);
+      document.body.appendChild(form);form.submit();form.remove();resolve(true);
+    }catch(error){reject(error);}
+  });
+}
+function readPendingOnlineQueue(){
+  try{const value=JSON.parse(localStorage.getItem(ONLINE_QUEUE_STORAGE_KEY)||"[]");return Array.isArray(value)?value:[];}catch(_){return [];}
+}
+function savePendingOnlineQueue(queue){
+  try{localStorage.setItem(ONLINE_QUEUE_STORAGE_KEY,JSON.stringify(queue));return true;}catch(_){setStudentSyncStatus("⚠️ Penyimpanan antrean lokal tidak tersedia. Sistem mencoba mengirim jawaban langsung.");return false;}
+}
+function enqueueOnlineRecord(record){
+  const config=getOnlineConfig();
+  if(!config||!config.endpoint||!config.classCode){setStudentSyncStatus("⚠️ Rekap online belum dikonfigurasi. Jawaban hanya tersimpan di perangkat ini.");return;}
+  const item={...record,classCode:config.classCode};
+  const queue=readPendingOnlineQueue();
+  if(!queue.some(existing=>existing.recordId===item.recordId))queue.push(item);
+  const queued=savePendingOnlineQueue(queue);
+  if(!queued){sendOnlineRecordDirect(item,config);return;}
+  setStudentSyncStatus("☁️ Mengirim jawaban ke dashboard guru... Antrean: "+queue.length);
+  pumpOnlineQueue();
+}
+async function sendOnlineRecordDirect(record,config){
+  try{
+    await postOnlineRecord(record,config);await delay(2200);
+    const check=await jsonpRequest(makeApiUrl(config,{action:"hasRecord",classCode:config.classCode,recordId:record.recordId}));
+    setStudentSyncStatus(check&&check.ok&&check.exists?"✅ Jawaban berhasil dikirim ke dashboard guru.":"⚠️ Pengiriman belum terkonfirmasi. Periksa koneksi internet.");
+  }catch(error){setStudentSyncStatus("⚠️ Jawaban belum terkirim: "+error.message);}
+}
+async function pumpOnlineQueue(){
+  if(onlineQueueBusy||!navigator.onLine)return;
+  const config=getOnlineConfig();if(!config||!config.endpoint||!config.classCode)return;
+  onlineQueueBusy=true;
+  try{
+    while(navigator.onLine){
+      const queue=readPendingOnlineQueue();
+      if(!queue.length)break;
+      const record=queue[0];let confirmed=false;
+      for(let attempt=0;attempt<3&&!confirmed;attempt++){
+        try{
+          await postOnlineRecord(record,config);
+          await delay(attempt===0?1800:2500);
+          const check=await jsonpRequest(makeApiUrl(config,{action:"hasRecord",classCode:config.classCode,recordId:record.recordId}));
+          confirmed=!!(check&&check.ok&&check.exists);
+        }catch(error){if(attempt===2)console.warn("Sinkronisasi tertunda:",error);}
+      }
+      if(!confirmed){setStudentSyncStatus("⚠️ "+readPendingOnlineQueue().length+" data belum terkonfirmasi. Data disimpan sementara dan akan dicoba lagi otomatis.");setTimeout(()=>pumpOnlineQueue(),15000);break;}
+      const latest=readPendingOnlineQueue().filter(item=>item.recordId!==record.recordId);
+      savePendingOnlineQueue(latest);
+      setStudentSyncStatus("✅ Jawaban terkirim. Sisa antrean: "+latest.length);
+    }
+    if(readPendingOnlineQueue().length===0)setStudentSyncStatus("✅ Semua jawaban sudah terkirim ke dashboard guru.");
+  }finally{onlineQueueBusy=false;}
+}
+window.addEventListener("online",()=>pumpOnlineQueue());
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)pumpOnlineQueue();});
+function recordQuestionAnswer(question,levelIndex,questionIndex,chosenIndexes,isCorrect,timedOut){
+  const options=question[1];
+  const expected=getCorrectIndexes(question);
+  const chosen=chosenIndexes.filter(index=>Number.isInteger(index)&&index>=0&&index<options.length);
+  const letters=indexes=>indexes.map(index=>String.fromCharCode(65+index)+". "+options[index]);
+  enqueueOnlineRecord({
+    type:"answer",recordId:makeRecordId(),runId:state.runId,name:state.name,group:state.group,
+    levelNo:levelIndex+1,levelName:levels[levelIndex].name,questionNo:questionIndex+1,
+    questionText:question[0],options:options.slice(),correctAnswers:letters(expected),selectedAnswers:letters(chosen),
+    isCorrect:!!isCorrect,timedOut:!!timedOut,points:isCorrect?100:0,score:state.score,correctCount:state.correct,coins:state.coins,
+    totalQuestions:totalQuestions(),status:"Sedang mengerjakan",timestamp:new Date().toISOString()
+  });
+}
+function recordFinalAttempt(place,reason,isCorrect,hasReason){
+  const labels={gua:"Di dalam gua",air:"Di dekat air terjun",pohon:"Di bawah pohon kelapa bertanda silang di sebelah timur pulau",pantai:"Di pantai barat"};
+  enqueueOnlineRecord({
+    type:"final",recordId:makeRecordId(),runId:state.runId,name:state.name,group:state.group,
+    levelNo:6,levelName:"Misi Final",questionNo:1,questionText:"Di manakah harta karun disembunyikan?",
+    options:Object.values(labels),correctAnswers:[labels.pohon],selectedAnswers:place&&labels[place]?[labels[place]]:[],
+    isCorrect:!!isCorrect,timedOut:false,points:isCorrect&&hasReason?200:0,score:state.score,correctCount:state.correct,coins:state.coins,
+    totalQuestions:totalQuestions(),status:isCorrect?(hasReason?"Jawaban final benar":"Alasan belum lengkap"):"Jawaban final salah",
+    finalReason:reason||"",timestamp:new Date().toISOString()
+  });
+}
+function populateOnlineConfigForm(){
+  const cfg=getTeacherOnlineConfig()||{};
+  if($("onlineEndpointInput"))$("onlineEndpointInput").value=cfg.endpoint||"";
+  if($("onlineClassCodeInput"))$("onlineClassCodeInput").value=cfg.classCode||"";
+  if($("onlineTeacherKeyInput"))$("onlineTeacherKeyInput").value=cfg.teacherKey||"";
+}
+function saveOnlineConfig(){
+  if(!teacherUnlocked)return null;
+  const endpoint=$("onlineEndpointInput").value.trim(),classCode=$("onlineClassCodeInput").value.trim(),teacherKey=$("onlineTeacherKeyInput").value.trim();
+  if(!/^https:\/\//i.test(endpoint)||!endpoint.includes("/exec")){setOnlineStatus("Masukkan URL Web App Apps Script yang berakhiran /exec.");return null;}
+  if(!classCode||!teacherKey){setOnlineStatus("Kode kelas dan kunci akses guru wajib diisi.");return null;}
+  const config={endpoint,classCode,teacherKey};onlineMasterConfig=config;
+  try{localStorage.setItem(ONLINE_CONFIG_STORAGE_KEY,JSON.stringify(config));setOnlineStatus("✅ Pengaturan online tersimpan di browser guru. Lanjutkan dengan Tes Koneksi.");}
+  catch(_){setOnlineStatus("⚠️ Pengaturan tersimpan sementara selama halaman ini terbuka. Browser tidak mengizinkan penyimpanan permanen.");}
+  return config;
+}
+async function testOnlineConnection(){
+  if(!teacherUnlocked)return;
+  const config=saveOnlineConfig();if(!config)return;
+  setOnlineStatus("Menghubungi Google Sheets...");
+  try{
+    const result=await jsonpRequest(makeApiUrl(config,{action:"ping",classCode:config.classCode,teacherKey:config.teacherKey}));
+    if(result&&result.ok)setOnlineStatus("✅ Terhubung! Database aktif. Jumlah data tersimpan: "+(result.count||0)+".");
+    else setOnlineStatus("❌ Koneksi ditolak: "+(result&&result.error?result.error:"Periksa kode kelas dan kunci guru."));
+  }catch(error){setOnlineStatus("❌ "+error.message);}
+}
+function parseOnlineTimestamp(value){const date=new Date(value);return isNaN(date.getTime())?"-":date.toLocaleString("id-ID");}
+function buildOnlineSummaries(records){
+  const byRun=new Map();
+  records.forEach(record=>{
+    if(!record||!record.runId)return;
+    if(!byRun.has(record.runId))byRun.set(record.runId,{runId:record.runId,name:record.name||"Tanpa nama",group:record.group||"-",score:0,correct:0,coins:0,totalQuestions:Number(record.totalQuestions)||totalQuestions(),answered:0,finalAttempts:0,status:"Belum selesai",date:record.timestamp||"",finishedAt:"",records:[]});
+    const summary=byRun.get(record.runId);summary.records.push(record);
+    if(record.name)summary.name=record.name;if(record.group)summary.group=record.group;
+    if(record.type==="answer"){
+      summary.answered++;
+      if(record.isCorrect)summary.correct++;
+      summary.score+=Number(record.points)||0;
+      summary.coins=Number(record.coins)||summary.coins;
+      if(!summary.date||new Date(record.timestamp)<new Date(summary.date))summary.date=record.timestamp;
+    }else if(record.type==="final"){
+      summary.finalAttempts++;
+      summary.score+=Number(record.points)||0;
+      if(!summary.date||new Date(record.timestamp)<new Date(summary.date))summary.date=record.timestamp;
+    }else if(record.type==="finish"){
+      summary.status="Selesai";summary.score=Number(record.score)||summary.score;summary.correct=Number(record.correctCount)||summary.correct;summary.coins=Number(record.coins)||0;summary.totalQuestions=Number(record.totalQuestions)||summary.totalQuestions;summary.finishedAt=record.timestamp||"";summary.date=record.timestamp||summary.date;
+    }
+  });
+  return [...byRun.values()].sort((a,b)=>b.score-a.score||new Date(a.date)-new Date(b.date));
+}
+function renderOnlineDashboard(records){
+  onlineRecords=Array.isArray(records)?records:[];
+  const summaries=buildOnlineSummaries(onlineRecords);
+  const students=new Set(summaries.map(item=>(item.name+"|"+item.group).trim().toLowerCase()).filter(Boolean));
+  $("onlineStudentCount").textContent=students.size;
+  $("onlineAttemptCount").textContent=summaries.length;
+  $("onlineCompletedCount").textContent=summaries.filter(item=>item.status==="Selesai").length;
+  $("onlineAnswerCount").textContent=onlineRecords.filter(item=>item.type==="answer").length;
+  $("onlineResultsBody").innerHTML=summaries.length?summaries.map((item,index)=>`<tr><td>${index+1}</td><td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.group)}</td><td>${item.score}</td><td>${item.correct}/${item.totalQuestions}</td><td>${item.answered}/${item.totalQuestions}</td><td>${escapeHtml(item.status)}</td><td>${escapeHtml(parseOnlineTimestamp(item.finishedAt||item.date))}</td></tr>`).join(""):'<tr><td colspan="8">Belum ada hasil online.</td></tr>';
+  const details=onlineRecords.filter(item=>item.type==="answer"||item.type==="final").sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  $("onlineAnswersBody").innerHTML=details.length?details.slice(0,500).map(item=>`<tr><td>${escapeHtml(item.name||"")}</td><td>${escapeHtml(item.group||"-")}</td><td>${escapeHtml(item.levelName||"")}</td><td>${item.type==="final"?"Final":(item.questionNo||"")}</td><td>${escapeHtml(item.questionText||"")}</td><td>${escapeHtml((item.selectedAnswers||[]).join("; ")||"Tidak menjawab")}</td><td>${escapeHtml((item.correctAnswers||[]).join("; "))}</td><td>${item.isCorrect?"✅ Benar":"❌ Salah"}${item.timedOut?" / Waktu habis":""}</td><td>${escapeHtml(parseOnlineTimestamp(item.timestamp))}</td></tr>`).join(""):'<tr><td colspan="9">Belum ada jawaban terekam.</td></tr>';
+  onlineLastLoadAt=new Date();
+}
+async function refreshOnlineDashboard(){
+  if(!teacherUnlocked||onlineRefreshBusy)return;
+  const config=getTeacherOnlineConfig();
+  if(!config||!config.endpoint||!config.classCode||!config.teacherKey){setOnlineStatus("Lengkapi pengaturan online terlebih dahulu.");return;}
+  onlineRefreshBusy=true;setOnlineStatus("Mengambil rekap siswa dari Google Sheets...");
+  try{
+    const result=await jsonpRequest(makeApiUrl(config,{action:"list",classCode:config.classCode,teacherKey:config.teacherKey}));
+    if(!result||!result.ok)throw new Error(result&&result.error?result.error:"Server menolak permintaan.");
+    renderOnlineDashboard(result.records||[]);
+    setOnlineStatus("✅ Rekap diperbarui: "+(result.records||[]).length+" catatan jawaban/penyelesaian. Terakhir dimuat "+new Date().toLocaleTimeString("id-ID")+".");
+  }catch(error){setOnlineStatus("❌ Gagal memuat rekap: "+error.message);}
+  finally{onlineRefreshBusy=false;}
+}
+function xmlEscape(value){return String(value===undefined||value===null?"":value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&apos;");}
+function excelCell(value){const isNumber=typeof value==="number"&&Number.isFinite(value);return `<Cell><Data ss:Type="${isNumber?"Number":"String"}">${xmlEscape(value)}</Data></Cell>`;}
+function excelRow(values){return "<Row>"+values.map(excelCell).join("")+"</Row>";}
+function exportOnlineExcel(){
+  if(!teacherUnlocked)return;
+  if(!onlineRecords.length){alert("Belum ada data online. Klik Muat Rekap Online terlebih dahulu.");return;}
+  const summaries=buildOnlineSummaries(onlineRecords);
+  const summaryRows=[["Peringkat","Nama","Kelas/Kelompok","Skor","Jawaban Benar","Soal Terjawab","Total Soal","Koin","Status","Waktu"],...summaries.map((item,index)=>[index+1,item.name,item.group,item.score,item.correct,item.answered,item.totalQuestions,item.coins,item.status,parseOnlineTimestamp(item.finishedAt||item.date)])];
+  const detailRows=[["Nama","Kelas/Kelompok","Jenis","Level","Nomor Soal","Pertanyaan","Jawaban Siswa","Kunci Jawaban","Benar?","Waktu Habis?","Poin","Waktu"],...onlineRecords.filter(item=>item.type==="answer"||item.type==="final").map(item=>[item.name,item.group,item.type,item.levelName,item.questionNo,item.questionText,(item.selectedAnswers||[]).join("; "),(item.correctAnswers||[]).join("; "),item.isCorrect?"Ya":"Tidak",item.timedOut?"Ya":"Tidak",item.points,parseOnlineTimestamp(item.timestamp)])];
+  const xml=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="Header"><Font ss:Bold="1"/><Interior ss:Color="#F5C451" ss:Pattern="Solid"/></Style></Styles><Worksheet ss:Name="Rekap Siswa"><Table>${summaryRows.map((row,index)=>index===0?`<Row>${row.map(v=>`<Cell ss:StyleID="Header"><Data ss:Type="String">${xmlEscape(v)}</Data></Cell>`).join("")}</Row>`:excelRow(row)).join("")}</Table></Worksheet><Worksheet ss:Name="Detail Jawaban"><Table>${detailRows.map((row,index)=>index===0?`<Row>${row.map(v=>`<Cell ss:StyleID="Header"><Data ss:Type="String">${xmlEscape(v)}</Data></Cell>`).join("")}</Row>`:excelRow(row)).join("")}</Table></Worksheet></Workbook>`;
+  const blob=new Blob(["\ufeff",xml],{type:"application/vnd.ms-excel;charset=utf-8"});
+  const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download="Rekap_Misi_Pemburu_Harta_Karun_V7.xls";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+
+function updateStats(){$("topScore").textContent=state.score;$("topCoins").textContent=state.coins;$("topClues").textContent=state.clues.length+"/5";}
+function saveProgress(){localStorage.setItem("misiHartaProgress",JSON.stringify({name:state.name,score:state.score,coins:state.coins,correct:state.correct,level:state.level,q:state.q,clues:state.clues}));}
+function start(){let n=$("playerName").value.trim(),group=$("playerGroup").value.trim();if(!n){alert("Masukkan nama siswa terlebih dahulu.");$("playerName").focus();return;}clearInterval(state.interval);state={...state,name:n,group,runId:makeRecordId(),startedAt:new Date().toISOString(),score:0,coins:0,correct:0,level:0,q:0,clues:[],selected:null,answered:false,timer:30,interval:null};saveProgress();updateStats();renderMap();show("mapScreen");pumpOnlineQueue();}
+function renderMap(){
+ $("playerBadge").textContent="Petualang: "+state.name;
+ $("mapProgress").style.width=(state.clues.length/5*100)+"%";
+ $("mapPlaces").innerHTML=levels.map((l,i)=>{let done=state.clues.includes(i),locked=i>state.clues.length;return `<div class="place ${done?"done":locked?"locked":""}"><div class="emoji">${done?"✅":locked?"🔒":l.icon}</div><strong>LEVEL ${i+1}</strong><span>${l.name}</span><small>${done?"Tuntas":locked?"Selesaikan level sebelumnya":"Mulai tantangan"}</small>${!done&&!locked?`<button onclick="beginLevel(${i})" style="margin-top:5px;padding:8px 12px">Masuk</button>`:""}</div>`}).join("");
+ $("inventory").innerHTML=state.clues.length?state.clues.map(i=>`<div class="clue-card"><span>📜</span><b>Petunjuk ${i+1}</b><br>${levels[i].clue}</div>`).join(""):'<span class="muted">Belum ada petunjuk. Mulailah petualanganmu!</span>';
+ $("finalBtn").disabled=state.clues.length!==5;$("finalBtn").textContent=state.clues.length===5?"Menuju Misi Final 🏆":"Menuju Misi Final 🔒";
+ updateStats();saveProgress();
+}
+function beginLevel(i){if(i>state.clues.length||state.clues.includes(i))return;state.level=i;state.q=0;renderQuestion();show("quizScreen");}
+function renderQuestion(){
+ clearInterval(state.interval);state.answered=false;state.timer=30;
+ const l=levels[state.level],q=l.questions[state.q];
+ $("levelEyebrow").textContent="LEVEL "+(state.level+1);$("levelTitle").textContent=l.name;$("topic").textContent=l.topic;
+ $("questionCount").textContent=`Soal ${state.q+1}/${l.questions.length}`;$("quizProgress").style.width=((state.q)/l.questions.length*100)+"%";
+ $("questionText").innerHTML=(l.passage&&state.q===0?`<div class="feedback"><b>Teks bacaan</b><br>${escapeHtml(l.passage)}</div>`:"")+escapeHtml(q[0]);
+ const multi=isMultiAnswerQuestion(q);
+ $("multiAnswerHint").classList.toggle("hidden",!multi);
+ $("submitMultiAnswerBtn").classList.toggle("hidden",!multi);$("submitMultiAnswerBtn").disabled=true;
+ $("answers").innerHTML=q[1].map((a,i)=>`<button class="answer" data-index="${i}">${String.fromCharCode(65+i)}. ${escapeHtml(a)}</button>`).join("");
+ [...$("answers").querySelectorAll("button")].forEach(b=>b.addEventListener("click",()=>{
+   const index=Number(b.dataset.index);
+   if(multi)toggleMultiAnswer(index);else answer(index);
+ }));
+ $("feedback").classList.add("hidden");$("nextBtn").classList.add("hidden");$("quizProgress").style.width=((state.q)/l.questions.length*100)+"%";$("timer").textContent=30;
+ state.interval=setInterval(()=>{if(state.answered)return;state.timer--;$("timer").textContent=state.timer;if(state.timer<=0)answer(multi?[]:-1,true);},1000);
+}
+function toggleMultiAnswer(index){
+ if(state.answered)return;
+ const button=$("answers").querySelector(`button[data-index="${index}"]`);
+ if(!button)return;
+ button.classList.toggle("selected");
+ $("submitMultiAnswerBtn").disabled=!$("answers").querySelector(".answer.selected");
+}
+function answer(selection,timeout=false){
+ if(state.answered)return;state.answered=true;clearInterval(state.interval);
+ const q=levels[state.level].questions[state.q],multi=isMultiAnswerQuestion(q);
+ const expected=getCorrectIndexes(q);
+ const chosen=multi?(Array.isArray(selection)?selection.map(Number):[]):[Number(selection)];
+ const correct=expected.length===chosen.length&&expected.every(index=>chosen.includes(index));
+ [...$("answers").querySelectorAll("button")].forEach((b,i)=>{
+   b.disabled=true;
+   if(expected.includes(i))b.classList.add("correct");
+   else if(chosen.includes(i))b.classList.add("wrong");
+ });
+ $("submitMultiAnswerBtn").disabled=true;
+ if(correct){state.score+=100;state.coins+=1;state.correct++;}updateStats();saveProgress();
+ const loggedSelection=chosen.filter(index=>Number.isInteger(index)&&index>=0&&index<q[1].length);
+ recordQuestionAnswer(q,state.level,state.q,loggedSelection,correct,timeout);
+ const feedbackText=multi?(correct?"Semua jawaban benar!":"Belum tepat. Pilih semua jawaban yang benar dan jangan memilih opsi yang salah."):(correct?"Jawaban benar!":"Belum tepat.");
+ $("feedback").innerHTML=(timeout?"⏰ Waktu habis. ":"")+(correct?"🎉 <b>":"💡 <b>")+feedbackText+"</b> "+escapeHtml(q[3])+(correct?" Kamu mendapat 100 poin dan 1 koin.":"");
+ $("feedback").classList.remove("hidden");$("nextBtn").textContent=state.q===levels[state.level].questions.length-1?"Selesaikan Level →":"Soal Berikutnya →";$("nextBtn").classList.remove("hidden");
+}
+function nextQuestion(){if(state.q<levels[state.level].questions.length-1){state.q++;renderQuestion();}else{clearInterval(state.interval);if(!state.clues.includes(state.level))state.clues.push(state.level);state.clues.sort();saveProgress();updateStats();$("rewardTitle").textContent=levels[state.level].name+" berhasil ditaklukkan!";$("rewardClue").textContent=levels[state.level].clue;show("rewardScreen");}}
+function openFinal(){if(state.clues.length!==5)return;$("finalInventory").innerHTML=state.clues.map(i=>`<div class="clue-card"><span>📜</span><b>Petunjuk ${i+1}</b><br>${levels[i].clue}</div>`).join("");$("finalFeedback").classList.add("hidden");$("reason").value="";state.selected=null;$("findTreasureBtn").disabled=true;document.querySelectorAll("#finalOptions button").forEach(b=>b.classList.remove("selected"));show("finalScreen");}
+function finishWin(finalReason=""){
+  let record={name:state.name,group:state.group,runId:state.runId,score:state.score,correct:state.correct,coins:state.coins,status:"Selesai",totalQuestions:totalQuestions(),date:new Date().toLocaleString("id-ID")};
+  let arr=JSON.parse(localStorage.getItem("misiHartaResults")||"[]");arr.push(record);localStorage.setItem("misiHartaResults",JSON.stringify(arr));
+  enqueueOnlineRecord({type:"finish",recordId:makeRecordId(),runId:state.runId,name:state.name,group:state.group,score:state.score,correctCount:state.correct,coins:state.coins,status:"Selesai",totalQuestions:totalQuestions(),finalReason,timestamp:new Date().toISOString()});
+  $("winMessage").textContent=`Selamat, ${state.name}! Kamu berhasil mengumpulkan semua petunjuk dan menemukan harta karun Pulau Bahasa.`;
+  $("endScore").textContent=state.score;$("endCoins").textContent=state.coins;$("endCorrect").textContent=state.correct+"/"+totalQuestions();
+  $("onlineWinStatus").textContent="☁️ Rekap akhir sedang dikirim. Jawaban tiap soal sudah dikirim satu per satu.";show("winScreen");
+}
+function showResults(){
+  if(STUDENT_EDITION||!teacherUnlocked)return;
+  let arr=JSON.parse(localStorage.getItem("misiHartaResults")||"[]");
+  $("resultsBody").innerHTML=arr.length?arr.map(r=>`<tr><td>${escapeHtml(r.name)}</td><td>${r.score}</td><td>${r.correct}/${r.totalQuestions||25}</td><td>${r.coins}</td><td>${r.status}</td></tr>`).join(""):'<tr><td colspan="5">Belum ada hasil permainan lokal.</td></tr>';
+  populateOnlineConfigForm();show("teacherScreen");
+  const cfg=getTeacherOnlineConfig();if(cfg&&cfg.endpoint&&cfg.classCode&&cfg.teacherKey)refreshOnlineDashboard();
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function downloadStudentGame(){
+  if(STUDENT_EDITION||!teacherUnlocked)return;
+  try{
+    const onlineConfig=getTeacherOnlineConfig();
+    if(!onlineConfig||!onlineConfig.endpoint||!onlineConfig.classCode){alert("Atur koneksi Google Sheets terlebih dahulu di Dashboard Guru, lalu klik Simpan Pengaturan Online dan Tes Koneksi.");return;}
+    const activeBank=JSON.parse(JSON.stringify(levels));
+    if(!Array.isArray(activeBank)||!activeBank.length||activeBank.some(level=>!Array.isArray(level.questions)||!level.questions.length)){
+      alert("Bank soal belum lengkap. Pastikan setiap level memiliki minimal satu soal.");return;
+    }
+    // Salin halaman lalu kembalikan tampilan awal agar file siswa selalu dibuka dari halaman depan,
+    // meskipun guru sedang berada di dashboard atau editor saat mengekspor.
+    const exportRoot=document.documentElement.cloneNode(true);
+    ["home","mapScreen","quizScreen","rewardScreen","finalScreen","winScreen","teacherScreen","questionEditorScreen"].forEach(id=>{
+      const screen=exportRoot.querySelector("#"+id);
+      if(screen)screen.classList.toggle("hidden",id!=="home");
+    });
+    ["pinOverlay","howText","changePinForm"].forEach(id=>{
+      const element=exportRoot.querySelector("#"+id);
+      if(element)element.classList.add("hidden");
+    });
+    const source=exportRoot.outerHTML;
+    const marker="const PACKAGED_QUESTION_BANK = null;";
+    if(!source.includes(marker)){
+      alert("Penanda bank soal tidak ditemukan. Silakan gunakan file master V7 terbaru.");return;
+    }
+    // Escape '<' so question text cannot accidentally terminate the script tag in the exported HTML.
+    const safeBank=JSON.stringify(activeBank)
+      .replace(/</g,"\\u003c")
+      .replace(/\u2028/g,"\\u2028")
+      .replace(/\u2029/g,"\\u2029");
+    let studentHtml=source.replace(marker,"const PACKAGED_QUESTION_BANK = "+safeBank+";");
+    const safeOnlineConfig=JSON.stringify({endpoint:onlineConfig.endpoint,classCode:onlineConfig.classCode}).replace(/</g,"\\u003c");
+    studentHtml=studentHtml.replace("const ONLINE_CONFIG = null;","const ONLINE_CONFIG = "+safeOnlineConfig+";");
+    studentHtml=studentHtml.replace('<html lang="id">','<html lang="id" class="student-edition">');
+    studentHtml=studentHtml.replace('<title>Misi Pemburu Harta Karun — Versi Siswa</title>','<title>Misi Pemburu Harta Karun — Versi Siswa</title>');
+    studentHtml=studentHtml.replace('</style>', `
+/* Tampilan khusus siswa: area pengelolaan guru disembunyikan. */
+html.student-edition #teacherBtn,
+html.student-edition #viewResultsBtn,
+html.student-edition #teacherScreen,
+html.student-edition #questionEditorScreen,
+html.student-edition #pinOverlay,
+html.student-edition #onlineConfigPanel {display:none!important}
+html.student-edition .footer::after {content:" • Versi Siswa"}
+</style>`);
+    const blob=new Blob([studentHtml],{type:"text/html;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    link.href=url;
+    link.download="Misi_Pemburu_Harta_Karun_Versi_Siswa.html";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+    alert("Game untuk siswa berhasil dibuat!\n\nJumlah soal: "+activeBank.reduce((sum,level)=>sum+level.questions.length,0)+"\nJumlah level: "+activeBank.length+"\n\nKoneksi rekap online sudah ditanam. Setiap jawaban, termasuk jawaban salah dan waktu habis, akan dikirim ke Google Sheets saat internet tersedia. Bagikan file hasil unduhan ini kepada siswa.");
+  }catch(error){
+    console.error(error);
+    alert("Gagal membuat file game siswa: "+(error.message||error));
+  }
+}
+
+$("startBtn").onclick=start;$("howBtn").onclick=()=>$("howText").classList.toggle("hidden");$("teacherBtn").onclick=enterTeacherArea;
+$("nextBtn").onclick=nextQuestion;
+$("submitMultiAnswerBtn").onclick=()=>{const selected=[...$("answers").querySelectorAll(".answer.selected")].map(b=>Number(b.dataset.index));if(selected.length)answer(selected);};
+$("backMapBtn").onclick=()=>{clearInterval(state.interval);renderMap();show("mapScreen");};
+$("continueMapBtn").onclick=()=>{renderMap();show("mapScreen");};$("homeBtn").onclick=()=>show("home");$("finalBtn").onclick=openFinal;$("finalBackBtn").onclick=()=>{renderMap();show("mapScreen");};
+document.querySelectorAll("#finalOptions button").forEach(b=>b.onclick=()=>{state.selected=b.dataset.place;document.querySelectorAll("#finalOptions button").forEach(x=>x.classList.toggle("selected",x===b));$("findTreasureBtn").disabled=false;});
+$("findTreasureBtn").onclick=()=>{let reason=$("reason").value.trim(),isCorrect=state.selected==="pohon",hasReason=reason.length>=12;recordFinalAttempt(state.selected,reason,isCorrect,hasReason);if(!isCorrect){$("finalFeedback").textContent="Belum tepat! Baca kembali kelima petunjuk dan coba lagi. Petunjukmu tetap tersimpan."; $("finalFeedback").classList.remove("hidden");return;}if(!hasReason){$("finalFeedback").textContent="Tuliskan alasan yang lebih lengkap (minimal 12 karakter) sebelum membuka peti."; $("finalFeedback").classList.remove("hidden");return;}state.score+=200;state.coins+=5;updateStats();finishWin(reason);};
+$("playAgainBtn").onclick=()=>{localStorage.removeItem("misiHartaProgress");$("playerName").value=state.name;$("playerGroup").value=state.group||"";start();};$("viewResultsBtn").onclick=enterTeacherArea;$("teacherBackBtn").onclick=lockTeacherArea;
+$("editQuestionsBtn").onclick=()=>enterQuestionEditor(false);
+$("newQuestionDashboardBtn").onclick=()=>enterQuestionEditor(true);
+$("editorBackBtn").onclick=()=>{editorUnlocked=false;showResults();};
+$("editLevel").onchange=()=>{loadEditorQuestionList();loadEditorQuestion();};
+$("editQuestion").onchange=loadEditorQuestion;
+$("addQuestionBtn").onclick=beginAddQuestion;
+$("cancelAddQuestionBtn").onclick=loadEditorQuestion;
+$("saveQuestionBtn").onclick=saveEditedQuestion;
+$("resetQuestionsBtn").onclick=resetEditedQuestions;
+$("downloadStudentGameBtn").onclick=downloadStudentGame;
+$("exportBtn").onclick=()=>{if(!teacherUnlocked)return;let arr=JSON.parse(localStorage.getItem("misiHartaResults")||"[]");if(!arr.length){alert("Belum ada rekap untuk diekspor.");return;}let csv="Nama,Kelas/Kelompok,Skor,Benar,Koin,Status,Tanggal\n"+arr.map(r=>[r.name,r.group||"",r.score,r.correct,r.coins,r.status,r.date].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));a.download="rekap-misi-pemburu-harta-karun.csv";a.click();URL.revokeObjectURL(a.href);};
+$("clearResultsBtn").onclick=()=>{if(!teacherUnlocked)return;if(confirm("Hapus semua rekap permainan dari browser ini?")){localStorage.removeItem("misiHartaResults");showResults();}};
+$("saveOnlineConfigBtn").onclick=()=>{saveOnlineConfig();};
+$("testOnlineConnectionBtn").onclick=testOnlineConnection;
+$("refreshOnlineDataBtn").onclick=refreshOnlineDashboard;
+$("exportOnlineExcelBtn").onclick=exportOnlineExcel;
+$("changePinBtn").onclick=()=>{
+  if(!teacherUnlocked)return;
+  $("changePinForm").reset();$("changePinNotice").textContent="";
+  $("changePinForm").classList.toggle("hidden");
+  if(!$("changePinForm").classList.contains("hidden"))$("oldTeacherPin").focus();
+};
+$("cancelChangePinBtn").onclick=()=>{
+  $("changePinForm").reset();$("changePinForm").classList.add("hidden");
+};
+$("changePinForm").addEventListener("submit",async event=>{
+  event.preventDefault();if(!teacherUnlocked)return;
+  const oldPIN=$("oldTeacherPin").value,newPIN=$("newTeacherPin").value,confirmation=$("confirmTeacherPin").value;
+  const notice=$("changePinNotice");
+  if(!/^[0-9]{6}$/.test(newPIN)||newPIN!==confirmation){notice.textContent="PIN baru harus 6 angka dan kedua isian harus sama.";return;}
+  if(oldPIN===newPIN){notice.textContent="PIN baru harus berbeda dari PIN lama.";return;}
+  try{
+    if(!await isTeacherPINCorrect(oldPIN)){notice.textContent="PIN sekarang salah. PIN belum diubah.";return;}
+    localStorage.setItem(TEACHER_PIN_STORAGE_KEY,await hashTeacherPIN(newPIN));
+    $("changePinForm").reset();
+    notice.textContent="✅ PIN berhasil diganti pada browser ini. Simpan PIN baru dengan aman.";
+  }catch(error){notice.textContent=error.message||"Gagal menyimpan PIN baru.";}
+});
+refreshQuestionTotals();
+updateStats();
+if(getOnlineConfig())pumpOnlineQueue();
+setInterval(()=>{if(!STUDENT_EDITION&&teacherUnlocked&&!$("teacherScreen").classList.contains("hidden"))refreshOnlineDashboard();},60000);
+</script>
+
+</body></html>
